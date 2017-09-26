@@ -1,20 +1,15 @@
 # -*- coding: utf-8 -*-
 
+import itertools
+
 import simulation.strategies as strategies
 from simulation.game import Game
 
 def run():
-    possible_strategies = strategies.Strategy.__subclasses__()
-    for strategy1 in possible_strategies:
-        for strategy2 in possible_strategies:
-            player1 = strategy1()
-            player2 = strategy2()
-            game = Game(player1, player2, 10)
-            game.play()
-            print(player1)
-            print(player2)
-            print(player1.points)
-            print(player2.points)
+    players = (strategy() for strategy in strategies.Strategy.__subclasses__())
+    for (p1, p2) in itertools.combinations_with_replacement(players, 2):
+        game = Game(p1, p2, 10)
+        game.play()
 
 if __name__ == "__main__":
     run()

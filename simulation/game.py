@@ -10,6 +10,12 @@ class Game:
         self.n_rounds = n_rounds
 
     def play(self):
+
+        print("Duel:")
+        print("{} got {} points".format(self.player1.name, self.player1.points))
+        print("{} got {} points".format(self.player2.name, self.player2.points))
+        print("\n")
+
         for current_round in range(self.n_rounds):
             decision1 = self.player1.decide(
                 current_round, self.player2.previous_choices)
@@ -22,3 +28,11 @@ class Game:
 
             self.player1.points += payoff1
             self.player2.points += payoff2
+
+        print("Duel:")
+        print("{} got {} points".format(self.player1.name, self.player1.points))
+        print("{} got {} points".format(self.player2.name, self.player2.points))
+        print("\n")
+
+        self.player1.complete_duel()
+        self.player2.complete_duel()
