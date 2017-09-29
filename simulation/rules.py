@@ -12,4 +12,4 @@ class Rules:
 
     @classmethod
     def evaluate(cls, decision1, decision2):
-        return cls.EVALUATING_TABLE2[decision1][decision2]
+        return cls.EVALUATING_TABLE[decision1][decision2]
