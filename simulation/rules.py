@@ -2,14 +2,21 @@
 
 class Rules:
 
-    DEFECT = 1
     COOPERATE = 0
-    EVALUATING_TABLE = (((2, 2), (-4, 4)),
+    DEFECT = 1
+
+    CHOICES_STR = ['C', 'D']
+
+    #((A A) (C B))
+    #((B C) (D D))
+
+    PRISONERS_DILEMA = (((2, 2), (-4, 4)), # B > A > D > C
                         ((4, -4), (0, 0)))
+    GAME_OF_CHICKEN = (((2, 2), (0, 4)), # B > A > C > D
+                       ((4, 0), (-4, -4)))
+    STAG_HUNT = (((4, 4), (-4, 2)), # A > B >= D > C
+                 ((2, -4), (0, 0)))
 
-    EVALUATING_TABLE2 = (((2, 2), (-4, 4)),
-                         ((4, -4), (-8, -8)))
-
-    @classmethod
-    def evaluate(cls, decision1, decision2):
-        return cls.EVALUATING_TABLE[decision1][decision2]
+    @staticmethod
+    def evaluate(table, decision1, decision2):
+        return table[decision1][decision2]

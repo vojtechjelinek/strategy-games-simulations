@@ -4,11 +4,12 @@ from simulation.rules import Rules
 
 class Strategy:
 
+    name = ""
 
     def __init__(self):
         self.__points = 0
         self.__total_points = 0
-        self.__points_for_matches = 0
+        self.__games_won = 0
         self.__previous_choices = []
 
     def decide(self, current_round, enemy_previous_choices):
@@ -21,7 +22,7 @@ class Strategy:
         self.__total_points += self.__points
         self.__previous_choices = []
         self.__points = 0
-        self.__points_for_matches += win
+        self.__games_won += win
 
     @property
     def points(self):
@@ -36,17 +37,25 @@ class Strategy:
         return self.__total_points
 
     @property
-    def points_for_matches(self):
-        return self.__points_for_matches
+    def games_won(self):
+        return self.__games_won
 
     @property
     def previous_choices(self):
         return self.__previous_choices
 
+    @property
+    def previous_choices_str(self):
+        return " ".join(
+            Rules.CHOICES_STR[choice] for choice in self.__previous_choices)
+
+    def __str__(self):
+        return self.name
+
 
 class AlwaysCooperate(Strategy):
 
-    name = "Cooperator"
+    name = "Cooperate"
 
     def decide(self, current_round, enemy_previous_choices):
         return Rules.COOPERATE
@@ -54,34 +63,48 @@ class AlwaysCooperate(Strategy):
 
 class AlwaysDefect(Strategy):
 
-    name = "Defector"
+    name = "Defect"
 
     def decide(self, current_round, enemy_previous_choices):
         return Rules.DEFECT
 
 
-class Racional(Strategy):
+class RacionalKind(Strategy):
 
-    name = "Racionator"
+    name = "Kind Racional"
 
     def decide(self, current_round, enemy_previous_choices):
         if enemy_previous_choices:
             if enemy_previous_choices[-1] == Rules.COOPERATE:
                 return Rules.COOPERATE
             else:
-                if (len(enemy_previous_choices) == 2 and
+                if (len(enemy_previous_choices) >= 2 and
                         enemy_previous_choices[-2] == Rules.COOPERATE):
                     return Rules.COOPERATE
                 return Rules.DEFECT
 
         return Rules.COOPERATE
 
+class RacionalEvil(Strategy):
 
+    name = "Evil Racional"
+
+    def decide(self, current_round, enemy_previous_choices):
+        if enemy_previous_choices:
+            if enemy_previous_choices[-1] == Rules.COOPERATE:
+                if (len(enemy_previous_choices) >= 2 and
+                        enemy_previous_choices[-2] == Rules.COOPERATE):
+                    return Rules.DEFECT
+                return Rules.COOPERATE
+            else:
+                return Rules.DEFECT
+
+        return Rules.COOPERATE
 
 
 class Copy(Strategy):
 
-    name = "Copycat"
+    name = "Copy"
 
     def decide(self, current_round, enemy_previous_choices):
         if enemy_previous_choices:
