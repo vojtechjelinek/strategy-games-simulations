@@ -23,56 +23,55 @@ def run_game(rules, n_of_rounds=11, verbose=False):
     players.sort(key=lambda p: p.name)
     return players
 
-def show_graphs(*players_from_games):
-    n_players = len(players_from_games[0])
-    colors = ['r', 'g', 'b']
+def show_graph(names, values,  title):
+    n_players = len(names)
     index = np.arange(n_players)
     width = 0.25
-    game_names = ("Prisoner Dilema", "Game of Chicken", "Stag Hunt")
 
     ax = plt.subplot()
-    plots = []
-    for (i, game_players) in enumerate(players_from_games):
-        data = [p.total_points for p in game_players]
-        plot = plt.bar(index + width*i, data, align='center', width=width,
-                       color=colors[i])
-        plots.append(plot)
-    plt.xticks(index + width, [p.name for p in players_from_games[0]])
+    plt.bar(index + width, values,
+            align='center', width=width)
+
+    plt.title(title)
+
+    plt.xticks(index + width, names)
+    plt.xlim([-0.5, n_players])
     labels = ax.get_xticklabels()
     plt.setp(labels, rotation=30, horizontalalignment='right')
+
     plt.ylabel("N of points")
-    plt.title("Total poins gain")
-    plt.xlim([-0.5, n_players])
-    plt.legend(plots, game_names)
+    min_ = int(min(values))
+    max_ = int(max(values))
+    step = int((max_ - min_) / 10)
+    step = 1 if step == 0 else step
+    plt.yticks(range(min_, max_ + step, step))
+
+    ax.grid(True)
+    plt.tight_layout()
     plt.show()
 
-    ax = plt.subplot()
-    plots = []
-    for (i, game_players) in enumerate(players_from_games):
-        data = [p.games_won for p in game_players]
-        plot = plt.bar(index + width * i, data, align='center', width=width,
-                       color=colors[i])
-        plots.append(plot)
-    plt.xticks(index + width, [p.name for p in players_from_games[0]])
-    labels = ax.get_xticklabels()
-    plt.setp(labels, rotation=30, horizontalalignment='right')
-    plt.ylabel("N of games")
-    plt.title("Total Games Won")
-    plt.xlim([-0.5, n_players])
-    plt.legend(plots, game_names)
-    plt.show()
+
+def show_graphs(players_from_game, add_to_title=""):
+    names = [p.name for p in players_from_game]
+    values = [p.total_points for p in players_from_game]
+    show_graph(names, values, "Total poins gain" + " — " + add_to_title)
+
+    values = [p.games_won for p in players_from_game]
+    show_graph(names, values, "Total games won" + " — " + add_to_title)
 
 
 def run(verbose=False):
     players_prisoner_dilema = run_game(
         Rules.PRISONERS_DILEMA, verbose=verbose)
+    show_graphs(players_prisoner_dilema, Rules.PRISONERS_DILEMA)
+
     players_game_of_chicken = run_game(
         Rules.GAME_OF_CHICKEN, verbose=verbose)
+    show_graphs(players_game_of_chicken, Rules.GAME_OF_CHICKEN)
+
     players_stag_hunt = run_game(
         Rules.STAG_HUNT, verbose=verbose)
-
-    show_graphs(
-        players_prisoner_dilema, players_game_of_chicken, players_stag_hunt)
+    show_graphs(players_stag_hunt, Rules.STAG_HUNT)
 
 if __name__ == "__main__":
-    run(True)
+    run()
